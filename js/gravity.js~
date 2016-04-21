@@ -1,0 +1,14 @@
+var div;
+
+document.ready
+
+if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', function(event){
+        var alpha = event.alpha;
+        var beta = evnt.beta;
+        var gamma = event.gamma;
+
+        
+    },false);
+
+}
