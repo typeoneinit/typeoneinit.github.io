@@ -13,7 +13,7 @@ $(document).ready(function(){
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(event){
             var alpha = event.alpha;
-            var beta = evnt.beta;
+            var beta = event.beta;
             var gamma = event.gamma;
             
             var outputString = "alpha: " + alpha;
