@@ -20,10 +20,12 @@ $(document).ready(function(){
             outputString += "<br/>beta: " + beta;  
             outputString += "<br/>gamma: " + gamma;
 
-            div.text("");
+            div.text(outputString + "");
             
         },false);
 
+    } else {
+        div.text("unsupported devices");
     }
     
 
