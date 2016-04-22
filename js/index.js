@@ -5,6 +5,7 @@ $(document).ready(function(){
     motionDiv = $("#motion");
     gpsDiv = $("#gps");
     
+
     
     //set listeners
     if (window.DeviceOrientationEvent) {
@@ -25,7 +26,6 @@ $(document).ready(function(){
     //add gps listener
     if (navigator.geolocation) {
         geoWatcherId = navigator.geolocation.watchPosition(geoWatcher, geoErr);
-        // navigator.geolocation.getCurrentPosition(geoWatcher, geoErr);
     } else {
         gpsDiv.text("not support gps");    
     }
