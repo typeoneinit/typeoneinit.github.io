@@ -95,10 +95,8 @@ var geoErr = function(error) {
     // }
 };
 
-var IgniteMotionTimeSeriesEvent = function() {
-    this.docType = "jts";
-    this.version = 1;
-    this.versionCode = "ignite init";
+var IgniteTimeSeriesEvent = function() {
+    this.versionCode = "1";
     this.header = function() {
         this.startTime = new Date().getTime();
         this.endTime = new Date().getTime();
@@ -108,6 +106,10 @@ var IgniteMotionTimeSeriesEvent = function() {
     this.data = [];
 
 };
+
+IgniteTimeSeriesEvent.prototype.addData = function() {
+
+}
 
 var IgniteEvent = function() {
 
