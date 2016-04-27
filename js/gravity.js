@@ -14,6 +14,8 @@ var deviceOrientationWatcher = function(event) {
     outputString += "<br/>gamma: " + Math.round(gamma *10) / 10;
 
     orientDiv.html(prettyPrint(event).innerHTML);
+
+    OrientationTSEvents.addData(new OrientationEvent(event));
 };
 
 var deviceMotionWatcher = function(event) {
@@ -38,6 +40,9 @@ var deviceMotionWatcher = function(event) {
     outputString += "<br/>Zp: " + Math.round(accZp *10) / 10;
 
     motionDiv.html(prettyPrint(event).innerHTML);
+
+
+    MotionTSEvents.addData(new MotionEvent(event));
 };
 
 var geoWatcher = function(position) {
@@ -55,9 +60,10 @@ var geoWatcher = function(position) {
     outputString += "<br/>heading: " + heading;
     outputString += "<br/>speed: " + speed;
     outputString += "<br />time: " + new Date(timeStamp).customFormat(TIME_FORMAT);
+    outputString += "<br />counts: " + GeoTSEvents.recordCounts;
 
-    var p = new GeoLocationEvent(position);
 
+    GeoTSEvents.addData(new GeoLocationEvent(position));
     try {
         if (position.coords.latitude) {
             gpsDiv.html(prettyPrint(position).innerHTML + outputString);                    
@@ -96,44 +102,36 @@ var geoErr = function(error) {
 };
 
 var IgniteTimeSeriesEvent = function() {
-    this.versionCode = "1";
-    this.header = function() {
-        this.startTime = new Date().getTime();
-        this.endTime = new Date().getTime();
-        this.recordCounts = 0;
-    };
-
+    this.versionCode = IGNITE_VERSION_CODE;
+    this.type = null;
+    this.startTime = new Date().getTime();
+    this.endTime = new Date().getTime();
+    this.recordCounts = 0;
     this.data = [];
 
+    // this.addData = function(data) {
+    //     this.data.push(data);
+    //     this.recordCounts = this.data.length;
+    //     this.type = data.type;
+    // }
 };
 
-IgniteTimeSeriesEvent.prototype.addData = function() {
-
+IgniteTimeSeriesEvent.prototype.addData = function(data) {
+    this.data.push(data);
+    this.recordCounts = this.data.length;
+    this.type = data.type;
 }
 
-var IgniteEvent = function() {
-
-    this.OrientationEvent = function() {
-
-    };
-
-    this.MotionEvent = function() {
-
-    };
-
-    this.GeoLocationEvent = function() {
-
-    };
-};
 
 var OrientationEvent = function(event) {
-
+    this.type = "OrientationEvent";
+    this.timeMillis = new Date().getTime();
 
     if (event && event instanceof Object ) {
         this.alpha = event.alpha;
         this.beta = event.beta ;
         this.gamma = event.gamma;
-        this.webkitCompassHeading = event.webkitCompassHeading;
+        this.webkitCompassHeding = event.webkitCompassHeading;
         this.webkitCompassaccurarcy = event.webkitCompassaccurarcy;
     } else {
         this.alpha = 0;
@@ -146,7 +144,8 @@ var OrientationEvent = function(event) {
 };
 
 var MotionEvent = function(event) {
-
+    this.type = "MotionEvent";
+    this.timeMillis = new Date().getTime();
 
     if (event && event instanceof Object ) {
         this.acceleration = {};
@@ -185,10 +184,11 @@ var MotionEvent = function(event) {
         
         this.interval = 0;
     }
-
 };
 
 var GeoLocationEvent = function(position) {
+    this.type = "GeoLocationEvent";
+    this.timeMillis = new Date().getTime();
 
     if (position && position instanceof Object ) {
 
@@ -215,3 +215,8 @@ var GeoLocationEvent = function(position) {
     }
 
 };
+
+
+var OrientationTSEvents = new IgniteTimeSeriesEvent();
+var MotionTSEvents = new IgniteTimeSeriesEvent();
+var GeoTSEvents = new IgniteTimeSeriesEvent();

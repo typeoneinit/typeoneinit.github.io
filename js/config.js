@@ -1,3 +1,9 @@
+var IGNITE_VERSION_CODE = 1;
+var IGNITE_VERSION_NAME = "alpha_01"
+
+var TIME_FORMAT = "#YYYY#-#MM#-#DD# #hh#:#mm#:#ss#";
+
+
 //*** This code is copyright 2002-2003 by Gavin Kistner, !@phrogz.net
 //*** It is covered under the license viewable at http://phrogz.net/JS/_ReuseLicense.txt
 Date.prototype.customFormat = function(formatString){
@@ -17,7 +23,5 @@ Date.prototype.customFormat = function(formatString){
   AMPM=(ampm=hhh<12?'am':'pm').toUpperCase();
   mm=(m=this.getMinutes())<10?('0'+m):m;
   ss=(s=this.getSeconds())<10?('0'+s):s;
-  return formatString.replace("#hhhh#",hhhh).replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
+  return formatString.replace("h#hhh#",hhhh).replace("#hhh#",hhh).replace("#hh#",hh).replace("#h#",h).replace("#mm#",mm).replace("#m#",m).replace("#ss#",ss).replace("#s#",s).replace("#ampm#",ampm).replace("#AMPM#",AMPM);
 };
-
-var TIME_FORMAT = "#YYYY#-#MM#-#DD# #hh#:#mm#:#ss#";
