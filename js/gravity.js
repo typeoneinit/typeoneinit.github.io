@@ -5,44 +5,20 @@ var gpsDiv;
 var geoWatcherId = -1;
 
 var deviceOrientationWatcher = function(event) {
-    var alpha = event.alpha;
-    var beta = event.beta;
-    var gamma = event.gamma;
-    
-    var outputString = "alpha: " + Math.round(alpha *10) / 10;
-    outputString += "<br/>beta: " + Math.round(beta *10) / 10;  
-    outputString += "<br/>gamma: " + Math.round(gamma *10) / 10;
+    OrientationTSEvents.addData(new OrientationEvent(event));
 
+    //print logs
+    event.counts = OrientationTSEvents.recordCounts;
     orientDiv.html(prettyPrint(event).innerHTML);
 
-    OrientationTSEvents.addData(new OrientationEvent(event));
 };
 
 var deviceMotionWatcher = function(event) {
-    var accX = event.acceleration.x;
-    var accY = event.acceleration.y;
-    var accZ = event.acceleration.z;
-
-    var accXp = event.accelerationIncludingGravity.x;
-    var accYp = event.accelerationIncludingGravity.y;
-    var accZp = event.accelerationIncludingGravity.z;
-
-    var rAlhpha = event.rotationRate.alpha;
-    var rGamma = event.rotationRate.alpha;
-    var rAlhpha = event.rotationRate.alpha;
-
-    
-    var outputString = "<br/>X: " + Math.round(accX *10) / 10;
-    outputString += "<br/>Y: " + Math.round(accY *10) / 10;
-    outputString += "<br/>Z: " + Math.round(accZ *10) / 10;
-    outputString += "<br/>Xp: " + Math.round(accXp *10) / 10;
-    outputString += "<br/>Yp: " + Math.round(accYp *10) / 10;
-    outputString += "<br/>Zp: " + Math.round(accZp *10) / 10;
-
-    motionDiv.html(prettyPrint(event).innerHTML);
-
-
     MotionTSEvents.addData(new MotionEvent(event));
+
+    //print logs
+    event.count = MotionTSEvents.recordCounts;
+    motionDiv.html(prettyPrint(event).innerHTML);
 };
 
 var geoWatcher = function(position) {
@@ -108,12 +84,6 @@ var IgniteTimeSeriesEvent = function() {
     this.endTime = new Date().getTime();
     this.recordCounts = 0;
     this.data = [];
-
-    // this.addData = function(data) {
-    //     this.data.push(data);
-    //     this.recordCounts = this.data.length;
-    //     this.type = data.type;
-    // }
 };
 
 IgniteTimeSeriesEvent.prototype.addData = function(data) {
