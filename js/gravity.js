@@ -4,77 +4,32 @@ var gpsDiv;
 
 var geoWatcherId = -1;
 
+var curOrientationEvent = null;
+var curMotionEvent = null;
+var curGeoLocationEvent = null;
+
+
 var deviceOrientationWatcher = function(event) {
-    OrientationTSEvents.addData(new OrientationEvent(event));
-
-    //print logs
-    event.counts = OrientationTSEvents.recordCounts;
-    orientDiv.html(prettyPrint(event).innerHTML);
-
+    if (typeof event != "object") return ;
+    //store event
+    curOrientationEvent = event;
 };
 
 var deviceMotionWatcher = function(event) {
-    MotionTSEvents.addData(new MotionEvent(event));
-
-    //print logs
-    event.count = MotionTSEvents.recordCounts;
-    motionDiv.html(prettyPrint(event).innerHTML);
+    if (typeof event != "object") return ;
+    //store event
+    curMotionEvent = event;
 };
 
 var geoWatcher = function(position) {
-    var lat = position.coords.latitude;
-    var lon = position.coords.longitude;
-    var accuracy = position.coords.accuracy;
-    var heading = position.coords.heading;
-    var speed = position.coords.speed;
-    var timeStamp = position.timestamp;
+    if (typeof position != "object") return ;
 
-    var outputString = "<br/>WacherId: " + geoWatcherId;
-    outputString += "<br/>Lat: " + lat;
-    outputString += "<br/>Lon: " + lon;
-    outputString += "<br/>accuracy: " + accuracy;
-    outputString += "<br/>heading: " + heading;
-    outputString += "<br/>speed: " + speed;
-    outputString += "<br />time: " + new Date(timeStamp).customFormat(TIME_FORMAT);
-    outputString += "<br />counts: " + GeoTSEvents.recordCounts;
-
-
-    GeoTSEvents.addData(new GeoLocationEvent(position));
-    try {
-        if (position.coords.latitude) {
-            gpsDiv.html(prettyPrint(position).innerHTML + outputString);                    
-        } else {
-            gpsDiv.html("no data");
-        }
-            // gpsDiv.html(outputString);
-        
-
-    } catch (err) {
-        gpsDiv.html(err.message);
-    }
-
+    //store event
+    curGeoLocationEvent = position; 
 }
 
 var geoErr = function(error) {
     gpsDiv.html(prettyPrint(error).innerHTML);
-    // switch(error.code) {
-    //     case error.PERMISSION_DENIED:
-    //         // Permission denied alert error message
-    //         gpsDiv.html("no permission: " + error.message);
-    //         break;
-    //     case error.POSITION_UNAVAILABLE:
-    //         gpsDiv.html("position unavailable: " + error.message);
-    //         break;
-    //     case error.TIMEOUT:
-    //         gpsDiv.html("timeout: " + error.message);
-    //         break;
-
-    //     default:
-    //     case error.UNKNOWN_ERROR:
-    //         // Unknown error alert error message
-    //         gpsDiv.html(error.message);
-    //         break;        
-    // }
 };
 
 var IgniteTimeSeriesEvent = function() {
@@ -86,13 +41,28 @@ var IgniteTimeSeriesEvent = function() {
     this.data = [];
 };
 
+//Time series events model
 IgniteTimeSeriesEvent.prototype.addData = function(data) {
-    this.data.push(data);
-    this.recordCounts = this.data.length;
-    this.type = data.type;
+    if (data && typeof data == 'object') {
+        this.data.push(data);
+        this.recordCounts = this.data.length;
+        this.type = data.type;        
+    } else { // push null
+        this.data.push(null);
+    }
+
+}
+
+var IgniteSensorCollection = function() {
+    this.hostname = window.location.hostname;
+    this.userAgent = navigator.userAgent;
+    this.orientation = new IgniteTimeSeriesEvent();
+    this.motion = new IgniteTimeSeriesEvent();
+    this.geoLocation = new IgniteTimeSeriesEvent();
 }
 
 
+//Orientation Event Model
 var OrientationEvent = function(event) {
     this.type = "OrientationEvent";
     this.timeMillis = new Date().getTime();
@@ -113,6 +83,7 @@ var OrientationEvent = function(event) {
 
 };
 
+//Motion Event Model
 var MotionEvent = function(event) {
     this.type = "MotionEvent";
     this.timeMillis = new Date().getTime();
@@ -156,6 +127,7 @@ var MotionEvent = function(event) {
     }
 };
 
+//Geo Location Event Model
 var GeoLocationEvent = function(position) {
     this.type = "GeoLocationEvent";
     this.timeMillis = new Date().getTime();
@@ -183,10 +155,9 @@ var GeoLocationEvent = function(position) {
         this.coords.speed = null;
         this.timestamp = new Date().getTime();
     }
-
 };
-
 
 var OrientationTSEvents = new IgniteTimeSeriesEvent();
 var MotionTSEvents = new IgniteTimeSeriesEvent();
-var GeoTSEvents = new IgniteTimeSeriesEvent();
+var GeoLocationTSEvents = new IgniteTimeSeriesEvent();
+
