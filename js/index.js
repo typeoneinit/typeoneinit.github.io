@@ -41,8 +41,15 @@ $(document).ready(function(){
         }, ONE_SECOND_MILLIS / MOTION_SAMPLE_RATE);
     var geoLocationLogger = setInterval(
         function(){
+            if (curGeoLocationEvent) {
             GeoLocationTSEvents.addData(curGeoLocationEvent);
-            gpsDiv.html("lat: " + curGeoLocationEvent.coords.latitude + "<br />lon: "+ curGeoLocationEvent.coords.longitude);       
+            if (curGeoLocationEvent.coords) {
+                gpsDiv.html("lat: " + curGeoLocationEvent.coords.latitude + "<br />lon: "+ curGeoLocationEvent.coords.longitude);                       
+            } else {
+                gpsDiv.html("cannot find coords of geolocation event")
+            }
+
+            }
         }, ONE_SECOND_MILLIS / GEO_SAMPLE_RATE);
 
     var totalLogger = setInterval(
