@@ -5,10 +5,13 @@ $(document).ready(function(){
     motionDiv = $("#motion");
     gpsDiv = $("#gps");
     
-    
+    orientDiv.text("123");
     //set listeners
     if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', deviceOrientationWatcher, false);
+        orientDiv.text("support DeviceOrientationEvent");
+        window.addEventListener('deviceorientation', deviceOrientationWatcher, true);
+    } else if (window.DeviceMotionEvent) {
+        orientDiv.text("support DeviceMotionEvent");
     } else {
         orientDiv.text("not support gyro");
     }
@@ -16,14 +19,15 @@ $(document).ready(function(){
 
     //add motion listener
     if (window.DeviceMotionEvent) {
-        motionDiv.text("init...");
-        window.addEventListener('devicemotion', deviceMotionWatcher, false);
+        motionDiv.text("support DeviceMotionEvent");
+        window.addEventListener('devicemotion', deviceMotionWatcher, true);
     } else {
         motionDiv.text("not support accelemeter");
     }
     
     //add gps listener
     if (navigator.geolocation) {
+        gpsDiv.text("support navigator.geolocation")
         geoWatcherId = navigator.geolocation.watchPosition(geoWatcher, geoErr);
     } else {
         gpsDiv.text("not support gps");    
@@ -32,12 +36,12 @@ $(document).ready(function(){
     var orientationLogger = setInterval(
         function(){
             OrientationTSEvents.addData(curOrientationEvent);
-            // orientDiv.html(prettyPrint(curOrientationEvent).innerHTML + OrientationTSEvents.recordCounts);
+            orientDiv.html(prettyPrint(curOrientationEvent).innerHTML + OrientationTSEvents.recordCounts);
         }, ONE_SECOND_MILLIS / MOTION_SAMPLE_RATE);
     var motionLogger = setInterval(
         function(){
             MotionTSEvents.addData(curMotionEvent);
-            // motionDiv.html(prettyPrint(curMotionEvent).innerHTML + MotionTSEvents.recordCounts);
+            motionDiv.html(prettyPrint(curMotionEvent).innerHTML + MotionTSEvents.recordCounts);
         }, ONE_SECOND_MILLIS / MOTION_SAMPLE_RATE);
     var geoLocationLogger = setInterval(
         function(){

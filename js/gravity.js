@@ -10,7 +10,10 @@ var curGeoLocationEvent = null;
 
 
 var deviceOrientationWatcher = function(event) {
-    if (typeof event != "object") return ;
+    if (typeof event != "object") {
+        title['ohoh']
+        return ;
+    }
     //store event
     curOrientationEvent = event;
 };
