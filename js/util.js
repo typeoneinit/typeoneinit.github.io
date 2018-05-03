@@ -787,3 +787,44 @@ function initId()
 
     return text;
 }
+
+function getDistanceFromLatLng(lat1, lng1, lat2, lng2, miles) { // miles optional
+    if (typeof miles === "undefined"){miles=false;}
+    function deg2rad(deg){return deg * (Math.PI/180);}
+    function square(x){return Math.pow(x, 2);}
+    var r=6371; // radius of the earth in km
+    lat1=deg2rad(lat1);
+    lat2=deg2rad(lat2);
+    var lat_dif=lat2-lat1;
+    var lng_dif=deg2rad(lng2-lng1);
+    var a=square(Math.sin(lat_dif/2))+Math.cos(lat1)*Math.cos(lat2)*square(Math.sin(lng_dif/2));
+    var d=2*r*Math.asin(Math.sqrt(a));
+    d*=2;//i dont know why but it works
+    if (miles){return d * 0.621371;} //return miles
+    else{return d;} //return km
+}
+
+
+/**
+ * return distance with readable unit string
+ * @param {*} d distance from kilometer 
+ */
+var getReadableDistance = function(d){
+    if (d<1) {
+        return d*1000 + "m";
+    } else {
+        return d + "km";
+    }
+}
+
+/**
+ * return distance with readable unit string
+ * @param {*} d distance from kilometer 
+ */
+var getReadableVelocity = function(v){
+    if (v<1) {
+        return v*1000 + "m/h";
+    } else {
+        return v + "km/h";
+    }
+}

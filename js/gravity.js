@@ -1,38 +1,40 @@
-var orientDiv;
-var motionDiv;
-var gpsDiv;
-
-var geoWatcherId = -1;
-
-var curOrientationEvent = null;
-var curMotionEvent = null;
-var curGeoLocationEvent = null;
-
-
-var deviceOrientationWatcher = function(event) {
-    if (typeof event != "object") {
-        title['ohoh']
-        return ;
-    }
-    //store event
-    curOrientationEvent = event;
-};
-
-var deviceMotionWatcher = function(event) {
-    if (typeof event != "object") return ;
-    //store event
-    curMotionEvent = event;
-};
 
 var geoWatcher = function(position) {
-    if (typeof position != "object") return ;
+    this.geoWatcherId = -1;
+    this.log = "";
+    this.pre;
 
-    //store event
-    curGeoLocationEvent = position; 
+    this.log += "lat: " + position.coords.latitude;
+    this.log += "<br />lon: " + position.coords.longitude;
+
+    
+    if (this.pre) {
+        this.log +="<br /> pre lat: " + this.pre.coords.latitude;
+        this.log +="<br /> pre lon: " + this.pre.coords.longitude;
+        this.dPos = getDistanceFromLatLng(
+            position.coords.latitude, 
+            position.coords.longitude,
+            this.pre.coords.latitude,
+            this.pre.coords.longitude);
+
+        this.dT = (position.timestamp - this.pre.timestamp) / 1000;
+        this.kmh = this.dPos / this.dT * 3600;
+
+        this.log +="<br /> distance: " + getReadableDistance(dPos);
+        this.log += "<br /> time: " + this.dT;
+        this.log += "<br /> v: " + getReadableVelocity(this.kmh);
+    }
+    this.log += "<br />speed: " + position.coords.speed;
+    this.log += "<br />accuracy: " + position.coords.accuracy;
+    this.log += "<br />heading: " + position.coords.heading;
+    this.log += "<br />time: " + position.timestamp;
+    this.pre = position;
+    GeoLocationTSEvents.addData(new GeoLocationEvent(position));
+    gpsDiv.html(this.log);
 }
 
 var geoErr = function(error) {
-    gpsDiv.html(prettyPrint(error).innerHTML);
+    gpsDiv.html("error: " + error.code);
 };
 
 var IgniteTimeSeriesEvent = function() {
@@ -55,80 +57,6 @@ IgniteTimeSeriesEvent.prototype.addData = function(data) {
     }
 
 }
-
-var IgniteSensorCollection = function() {
-    this.hostname = window.location.hostname;
-    this.userAgent = navigator.userAgent;
-    this.orientation = new IgniteTimeSeriesEvent();
-    this.motion = new IgniteTimeSeriesEvent();
-    this.geoLocation = new IgniteTimeSeriesEvent();
-}
-
-
-//Orientation Event Model
-var OrientationEvent = function(event) {
-    this.type = "OrientationEvent";
-    this.timeMillis = new Date().getTime();
-
-    if (event && event instanceof Object ) {
-        this.alpha = event.alpha;
-        this.beta = event.beta ;
-        this.gamma = event.gamma;
-        this.webkitCompassHeding = event.webkitCompassHeading;
-        this.webkitCompassaccurarcy = event.webkitCompassaccurarcy;
-    } else {
-        this.alpha = 0;
-        this.beta = 0;
-        this.gamma = 0;
-        this.webkitCompassHeading = 0;
-        this.webkitCompassaccurarcy = 0;        
-    }
-
-};
-
-//Motion Event Model
-var MotionEvent = function(event) {
-    this.type = "MotionEvent";
-    this.timeMillis = new Date().getTime();
-
-    if (event && event instanceof Object ) {
-        this.acceleration = {};
-        this.acceleration.x = 0;
-        this.acceleration.y = 0;
-        this.acceleration.z =0;
-
-        this.accelerationIncludingGravity = {};
-        this.accelerationIncludingGravity.x = 0;
-        this.accelerationIncludingGravity.y = 0;
-        this.accelerationIncludingGravity.z = -9.8;
-
-        this.rotationRate = {};
-
-        this.rotationRate.alpha = 0;
-        this.rotationRate.beta = 0;
-        this.rotationRate.gamma = 0;
-
-    } else {
-
-        this.acceleration = {};
-        this.acceleration.x = 0;
-        this.acceleration.y = 0;
-        this.acceleration.z =0;
-
-        this.accelerationIncludingGravity = {};
-        this.accelerationIncludingGravity.x = 0;
-        this.accelerationIncludingGravity.y = 0;
-        this.accelerationIncludingGravity.z = -9.8;
-
-        this.rotationRate = {};
-
-        this.rotationRate.alpha = 0;
-        this.rotationRate.beta = 0;
-        this.rotationRate.gamma = 0;
-        
-        this.interval = 0;
-    }
-};
 
 //Geo Location Event Model
 var GeoLocationEvent = function(position) {
@@ -163,4 +91,3 @@ var GeoLocationEvent = function(position) {
 var OrientationTSEvents = new IgniteTimeSeriesEvent();
 var MotionTSEvents = new IgniteTimeSeriesEvent();
 var GeoLocationTSEvents = new IgniteTimeSeriesEvent();
-
