@@ -37,6 +37,12 @@ var geoErr = function(error) {
     gpsDiv.html("error: " + error.code);
 };
 
+var geoOption = {
+    enableHighAccuracy: true,
+    maximumAge: 999,
+    timeout:30000
+}
+
 var IgniteTimeSeriesEvent = function() {
     this.versionCode = IGNITE_VERSION_CODE;
     this.type = null;

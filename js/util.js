@@ -799,7 +799,6 @@ function getDistanceFromLatLng(lat1, lng1, lat2, lng2, miles) { // miles optiona
     var lng_dif=deg2rad(lng2-lng1);
     var a=square(Math.sin(lat_dif/2))+Math.cos(lat1)*Math.cos(lat2)*square(Math.sin(lng_dif/2));
     var d=2*r*Math.asin(Math.sqrt(a));
-    d*=2;//i dont know why but it works
     if (miles){return d * 0.621371;} //return miles
     else{return d;} //return km
 }
