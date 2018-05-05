@@ -22,9 +22,13 @@ var geoWatcher = function(position) {
 
         this.log +="<br /> distance: " + getReadableDistance(dPos);
         this.log += "<br /> time: " + this.dT;
-        this.log += "<br /> v: " + getReadableVelocity(this.kmh);
+        try{
+            this.log += "<br />algorithm speed: " + getReadableVelocity(this.kmh.toFixed(3));
+        } catch(err) {
+            this.log += "<br />algorithm speed: " + null;
+        }
     }
-    this.log += "<br />speed: " + position.coords.speed;
+    this.log += "<br />gps detected speed: " + getReadableDistance(parseFloat(position.coords.speed * 3.6).toFixed(3));
     this.log += "<br />accuracy: " + position.coords.accuracy;
     this.log += "<br />heading: " + position.coords.heading;
     this.log += "<br />time: " + position.timestamp;
